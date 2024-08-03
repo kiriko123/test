@@ -25,7 +25,7 @@ public class StudentController {
 
     private final StudentService studentService;
 
-    private void setPage(Model model){
+    private void setPage(Model model) {
         int page = 0;
         int size = 1;
 
@@ -38,7 +38,7 @@ public class StudentController {
     }
 
     @GetMapping("/student/form")
-    public String studentForm(Model model,  @RequestParam(defaultValue = "0") int page,
+    public String studentForm(Model model, @RequestParam(defaultValue = "0") int page,
                               @RequestParam(defaultValue = "1") int size) {
         //ko l loi
         Student student = new Student();
@@ -74,9 +74,10 @@ public class StudentController {
         return "student/form";
     }
 
-    private List<Student> loadAll(){
+    private List<Student> loadAll() {
         return studentService.getAllStudents();
     }
+
     @PostMapping("/student/save")
     public String studentSave(@Validated @ModelAttribute(name = "student") Student student, BindingResult result, Model model) {
         if (result.hasErrors()) {
@@ -84,7 +85,7 @@ public class StudentController {
             return "student/form";
         }
 
-        if (studentService.getStudentById(student.getName()) != null){
+        if (studentService.getStudentById(student.getName()) != null) {
             model.addAttribute("messages", "Da ton tai nha");
             model.addAttribute("studentList", loadAll());
             setPage(model);
@@ -99,6 +100,7 @@ public class StudentController {
         setPage(model);
         return "student/form";
     }
+
     @PostMapping("/student/update")
     public String studentUpdate(@Validated @ModelAttribute(name = "student") Student student, BindingResult result, Model model) {
         if (result.hasErrors()) {
@@ -106,7 +108,7 @@ public class StudentController {
             return "student/form";
         }
 
-        if (studentService.getStudentById(student.getName()) == null){
+        if (studentService.getStudentById(student.getName()) == null) {
             model.addAttribute("messages", "ko co nha");
             model.addAttribute("studentList", loadAll());
             setPage(model);
@@ -118,9 +120,10 @@ public class StudentController {
         setPage(model);
         return "student/form";
     }
+
     @PostMapping("/student/{name}")
     public String studentDelete(@PathVariable("name") String name, Model model) {
-        if (studentService.getStudentById(name) == null){
+        if (studentService.getStudentById(name) == null) {
             model.addAttribute("messages", "ko co nha");
             model.addAttribute("studentList", loadAll());
             setPage(model);
@@ -133,11 +136,12 @@ public class StudentController {
         setPage(model);
         return "student/form";
     }
+
     @PostMapping("/student/find")
     public String studentFind(@RequestParam("keyword") String keyword, Model model) {
-        if(!keyword.isBlank()){
+        if (!keyword.isBlank()) {
             model.addAttribute("studentList", studentService.findByNameLike(keyword, keyword));
-        }else{
+        } else {
             model.addAttribute("studentList", loadAll());
         }
         model.addAttribute("student", new Student());

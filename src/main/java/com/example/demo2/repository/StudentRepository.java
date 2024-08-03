@@ -11,7 +11,4 @@ import java.util.List;
 public interface StudentRepository extends JpaRepository<Student, String> {
     List<Student> findAllByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String name, String email);
     List<Student> findByActive(boolean active);
-
-
-
 }

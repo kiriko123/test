@@ -31,6 +31,7 @@ public class I18nConfig implements WebMvcConfigurer {
         localeChangeInterceptor.setParamName("lang");
         registry.addInterceptor(localeChangeInterceptor).addPathPatterns("/**").excludePathPatterns("/images/**");
     }
+
     @Bean("localeResolver")
     public LocaleResolver localeResolver() {
         CookieLocaleResolver cookieLocaleResolver = new CookieLocaleResolver();

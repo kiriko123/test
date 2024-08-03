@@ -8,11 +8,17 @@ import java.util.List;
 
 public interface StudentService {
     Student getStudentById(String id);
+
     List<Student> getAllStudents();
+
     Student addStudent(Student student);
+
     Student updateStudent(Student student);
+
     void deleteStudent(String id);
+
     List<Student> findByNameLike(String name, String email);
+
     List<Student> findByActive(boolean active);
 
     List<Student> sortByMarks(Sort sort);
