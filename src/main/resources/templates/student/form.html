@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/layout.html::dynamic(~{::body})}">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class=" mt-5 row" >
+    <div class="col-5">
+        <h2 class="mb-4" th:text="#{form}">Form</h2>
+        <h5 th:text="${messages}"></h5>
+        <form action="/student/save" method="post" th:object="${student}" class="mb-4" style="display: flex; flex-direction: column; gap: 20px">
+            <div class="form-group">
+                <input th:field="*{name}" class="form-control" placeholder="Name" type="text">
+                <div class="text-danger" th:errors="*{name}"></div>
+            </div>
+            <div class="form-group">
+                <input th:field="*{email}" class="form-control" placeholder="Email" type="text">
+                <div class="text-danger" th:errors="*{email}"></div>
+            </div>
+            <div class="form-group">
+                <input th:field="*{marks}" class="form-control" placeholder="Marks" type="number">
+                <div class="text-danger" th:errors="*{marks}"></div>
+            </div>
+            <div class="form-group">
+                <div>
+                    <label class="form-check-label mr-2">
+                        <input th:field="*{gender}" type="radio" th:value="true" class="form-check-input"> Male
+                    </label>
+                    <label class="form-check-label">
+                        <input th:field="*{gender}" type="radio" th:value="false" class="form-check-input"> Female
+                    </label>
+                </div>
+                <div class="text-danger" th:errors="*{gender}"></div>
+            </div>
+            <div>
+                <select th:field="*{country}" class="form-select">
+                    <option value="">Nationality?</option>
+                    <option value="VN">VN</option>
+                    <option value="US">US</option>
+                </select>
+                <div class="text-danger" th:errors="*{country}"></div>
+            </div>
+            <div>
+                <label>Active</label>
+                <input type="checkbox" name="active" value="true" th:field="*{active}"> Active
+            </div>
+            <div class="form-group">
+                <input th:field="*{date}" class="form-control" placeholder="Date" type="date">
+                <div class="text-danger" th:errors="*{date}"></div>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary" formaction="/student/save" th:text="#{save}">Save</button>
+                <button type="submit" class="btn btn-secondary" formaction="/student/update" th:text="#{update}">Update</button>
+                <button type="submit" class="btn btn-danger" th:formaction="@{/student/{name}(name=${student.name})}" th:text="#{delete}">Delete</button>
+                <a class="btn btn-success"  href="/student/form" th:text="#{reset}">Reset</a>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="col-7">
+        <h2 class="mb-4" th:text="#{list}">List</h2>
+        <form action="/student/find" method="post">
+            <input th:value="${kw}" name="keyword" type="text" class="form-control" placeholder="Search..." id="searchInput" onchange="this.form.submit()">
+        </form>
+        <div>
+            Filter by active
+        </div>
+        <form action="/student/filter" method="post">
+            <div class="form-check">
+                <input th:checked="${kw1 == true}" name="keyword1" type="radio" value="true" class="form-check-input" onchange="this.form.submit()">
+                <label class="form-check-label" >Active</label>
+            </div>
+            <div class="form-check">
+                <input th:checked="${kw1 == false}" name="keyword1" type="radio" value="false" class="form-check-input" onchange="this.form.submit()">
+                <label class="form-check-label" >Inactive</label>
+            </div>
+        </form>
+
+        <div>
+            Sort by marks
+        </div>
+        <form action="/student/sort" method="post">
+            <div class="form-check">
+                <input th:checked="${sort == true}" name="sort" type="radio" value="true" class="form-check-input" onchange="this.form.submit()">
+                <label class="form-check-label" >Mark asc</label>
+            </div>
+            <div class="form-check">
+                <input th:checked="${sort == false}" name="sort" type="radio" value="false" class="form-check-input" onchange="this.form.submit()">
+                <label class="form-check-label" >Mark desc</label>
+            </div>
+        </form>
+
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Marks</th>
+                <th>Gender</th>
+                <th>Nation</th>
+                <th>Date</th>
+                <th>Active</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody th:each="student : ${studentList}">
+            <tr>
+                <td th:text="${student.name}"></td>
+                <td th:text="${student.email}"></td>
+                <td th:text="${student.marks}"></td>
+                <td th:text="${student.gender ? 'Male' : 'Female'}"></td>
+                <td th:text="${student.country}"></td>
+                <td th:text="${student.date}"></td>
+                <td th:text="${student.active}"></td>
+                <td><a th:href="@{/student/{name}(name=${student.name})}">Edit</a></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <nav>
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a th:text="#{previous}" class="page-link" th:href="@{/student/form(page=${currentPage - 1})}">Previous</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/student/form(page=${i})}" th:text="${i + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                    <a th:text="#{next}" class="page-link" th:href="@{/student/form(page=${currentPage + 1})}">Next</a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+
+</div>
+
+</body>
+</html>
